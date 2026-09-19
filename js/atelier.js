@@ -27,6 +27,7 @@ const FILS = [
   { id: 'sable',    nom: 'Sable',           hex: 0xc8bba4 },
   { id: 'ecru',     nom: 'Écru',            hex: 0xefe7d8 },
   { id: 'perle',    nom: 'Gris perle',      hex: 0x9aa0a2 },
+  { id: 'cuir',     nom: 'Cuir brun',       hex: 0x4a3324 },
   { id: 'bordeaux', nom: 'Bordeaux',        hex: 0x5e1f28 },
   { id: 'chaine',   nom: 'Chaîne argent 925', hex: 0xd9dee0, metal: true }
 ];
@@ -38,6 +39,11 @@ const COMPOSITIONS = [
   { id: 'libre',      nom: 'Libre' }
 ];
 
+const MONTAGES = [
+  { id: 'serre', nom: 'Serré' },
+  { id: 'noue',  nom: 'Noué' }
+];
+
 const CENTRES = [
   { id: 'aucun',     nom: 'Aucune' },
   { id: 'tahiti',    nom: 'Tahiti' },
@@ -46,6 +52,16 @@ const CENTRES = [
 
 const PRIX_PLANCHER = 150;
 
+/* Dimensions réelles des perles, en centimètres */
+const FORME = {
+  rondelle: { diam: 0.80, ep: 0.44 },
+  anneau:   { diam: 0.68, ep: 0.30 },
+  facette:  { diam: 0.62, ep: 0.44 },
+  perle:    { diam: 1.05, ep: 1.05 }
+};
+const ECART_FERMOIR = 1.6;   // arc réservé au fermoir T
+const EP_NOEUD = 0.30;       // place prise par les deux nœuds encadrant une perle
+
 /* ---------------- État ---------------- */
 const etat = {
   taille: 17,            // cm
@@ -53,6 +69,8 @@ const etat = {
   pierre: 'turquoise',   // pierre « au pinceau »
   seconde: 'argent',
   composition: 'alternee',
+  montage: 'serre',
+  nb: 0,                 // emplacements réellement retenus
   densite: 0.5,          // part de pierres dans le collier
   centre: 'tahiti',
   gravure: '',
@@ -64,8 +82,27 @@ const $ = s => document.querySelector(s);
 const hex6 = n => '#' + n.toString(16).padStart(6, '0');
 const nbSlots = () => Math.max(18, Math.min(52, Math.round((etat.taille + 1.2 - 1.6) / 0.42)));
 
+function epaisseur(id, sup) {
+  return FORME[(PIERRES[id] || PIERRES.argent).forme].ep + sup;
+}
+
+/* Une perle de Tahiti prend deux fois plus de place qu'une rondelle :
+   on recale le nombre d'emplacements sur la longueur réellement occupée. */
+function ajuster() {
+  const cible = etat.taille + 1.2 - ECART_FERMOIR;
+  const sup = etat.montage === 'noue' ? EP_NOEUD : 0;
+  for (let essai = 0; essai < 6; essai++) {
+    const somme = etat.slots.reduce((a, id) => a + epaisseur(id, sup), 0);
+    if (!somme || Math.abs(somme - cible) < 0.22) break;
+    const nb = Math.max(5, Math.min(60, Math.round(etat.slots.length * cible / somme)));
+    if (nb === etat.slots.length) break;
+    etat.nb = nb;
+    composer();
+  }
+}
+
 function composer() {
-  const n = nbSlots();
+  const n = etat.nb || nbSlots();
   const a = etat.pierre, b = etat.seconde;
   const s = new Array(n);
   if (etat.composition === 'alternee') {
@@ -98,7 +135,8 @@ function prix() {
   const total = etat.slots.reduce((somme, id) => somme + (PIERRES[id]?.prix || 0), 0);
   const fil = etat.fil === 'chaine' ? 38 : 0;
   const gravure = etat.gravure ? 25 : 0;
-  const brut = 78 + total + fil + gravure + (etat.taille - 16) * 3;
+  const noeuds = etat.montage === 'noue' ? 22 : 0;
+  const brut = 78 + total + fil + gravure + noeuds + (etat.taille - 16) * 3;
   return Math.max(PRIX_PLANCHER, Math.round(brut / 5) * 5);
 }
 
@@ -112,9 +150,10 @@ function recapTexte() {
   const fil = FILS.find(f => f.id === etat.fil);
   const lignes = [
     'Ma création M’jy',
-    `Tour de poignet : ${etat.taille} cm (${nbSlots()} emplacements)`,
+    `Tour de poignet : ${etat.taille} cm (${etat.slots.length} emplacements)`,
     `Lien : ${fil.nom}`,
     `Composition : ${COMPOSITIONS.find(c => c.id === etat.composition).nom}`,
+    `Montage : ${MONTAGES.find(m => m.id === etat.montage).nom}`,
     'Pierres : ' + inventaire().map(([id, n]) => `${n} × ${PIERRES[id].nom}`).join(', ')
   ];
   if (etat.gravure) lignes.push(`Gravure sur le fermoir : « ${etat.gravure} »`);
@@ -186,21 +225,28 @@ const scene3D = (() => {
     anneau: new THREE.SphereGeometry(0.5, 32, 20),
     fermoirAnneau: new THREE.TorusGeometry(0.3, 0.045, 12, 44),
     fermoirBarre: new THREE.CylinderGeometry(0.048, 0.048, 0.66, 16),
-    fermoirBout: new THREE.SphereGeometry(0.06, 14, 10)
+    fermoirBout: new THREE.SphereGeometry(0.06, 14, 10),
+    noeud: new THREE.TorusKnotGeometry(0.62, 0.3, 48, 10, 2, 3)
   };
-
-  /* Dimensions réelles, en centimètres */
-  const FORME = {
-    rondelle: { diam: 0.80, ep: 0.44 },
-    anneau:   { diam: 0.68, ep: 0.30 },
-    facette:  { diam: 0.62, ep: 0.44 },
-    perle:    { diam: 1.05, ep: 1.05 }
-  };
-  const ECART_FERMOIR = 1.6; // arc réservé au fermoir T
 
   let cordon = null, fermoir = null;
   let perles = [];
   let survol = null, choisi = -1;
+
+  /* textures des matières (assets/tex) */
+  const chargeur = new THREE.TextureLoader();
+  const cache = {};
+  const texture = (id, suffixe) => {
+    const cle = id + (suffixe || '');
+    if (!cache[cle]) {
+      const t = chargeur.load('/assets/tex/' + cle + '.jpg');
+      t.wrapS = t.wrapT = THREE.RepeatWrapping;
+      t.anisotropy = renderer.capabilities.getMaxAnisotropy();
+      if (!suffixe) t.colorSpace = THREE.SRGBColorSpace;
+      cache[cle] = t;
+    }
+    return cache[cle];
+  };
 
   /* grain de pierre fabriqué à la volée */
   const grain = (() => {
@@ -226,23 +272,25 @@ const scene3D = (() => {
     return t;
   })();
 
-  const materiau = def => {
+  const materiau = (def, id) => {
     const m = new THREE.MeshPhysicalMaterial({
-      color: def.hex,
-      roughness: def.rug,
+      color: 0xffffff,
+      map: texture(id),
+      roughnessMap: texture(id, '-r'),
+      bumpMap: texture(id, '-r'),
+      bumpScale: def.met ? 0.008 : (def.iris ? 0.006 : 0.028),
+      roughness: 1,
       metalness: def.met,
-      clearcoat: def.iris ? 1 : 0.12,
-      clearcoatRoughness: 0.08,
-      envMapIntensity: 1.25
+      clearcoat: def.iris ? 0.45 : 0.12,
+      clearcoatRoughness: 0.05,
+      envMapIntensity: def.iris ? 0.62 : 1.3
     });
-    if (!def.met && !def.iris) { m.bumpMap = grain; m.bumpScale = 0.022; }
-    if (def.met) { m.bumpMap = grain; m.bumpScale = 0.004; }
     if (def.iris) {
-      m.iridescence = def.iris;
-      m.iridescenceIOR = 1.45;
-      m.iridescenceThicknessRange = [180, 760];
-      m.sheen = 0.6;
-      m.sheenColor = new THREE.Color(0x8fd8e8);
+      m.iridescence = def.iris * 0.4;
+      m.iridescenceIOR = 1.5;
+      m.iridescenceThicknessRange = [220, 820];
+      m.sheen = 0.25;
+      m.sheenColor = new THREE.Color(0x9fdbe8);
     }
     return m;
   };
@@ -280,30 +328,49 @@ const scene3D = (() => {
     groupe.add(cordon);
 
     /* les perles, placées à la vraie longueur, épaules contre épaules */
-    const epaisseurs = etat.slots.map(id => FORME[(PIERRES[id] || PIERRES.argent).forme].ep);
+    const noue = etat.montage === 'noue';
+    const epaisseurs = etat.slots.map(id => epaisseur(id, noue ? EP_NOEUD : 0));
     const somme = epaisseurs.reduce((a, b) => a + b, 0);
     const k = (C - ECART_FERMOIR) / somme;        // ajustement fin pour boucler le tour
+    const serrage = Math.min(1, k * 1.1);         // si le rang est chargé, les perles rapetissent un peu
 
     let s = ECART_FERMOIR / 2;
     for (let i = 0; i < n; i++) {
       const def = PIERRES[etat.slots[i]] || PIERRES.argent;
       const dim = FORME[def.forme];
       const ep = epaisseurs[i] * k;
-      const mesh = new THREE.Mesh(GEO[def.forme] || GEO.rondelle, materiau(def));
+      const mesh = new THREE.Mesh(GEO[def.forme] || GEO.rondelle, materiau(def, etat.slots[i]));
       const alea = ((i * 2654435761) % 997) / 997;            // stable d'un rendu à l'autre
-      mesh.material.color.offsetHSL((alea - 0.5) * 0.035, (alea - 0.5) * 0.14, (alea - 0.5) * 0.085);
-      mesh.material.roughness = Math.min(1, Math.max(0.05, def.rug + (alea - 0.5) * 0.14));
+      mesh.material.color.offsetHSL(0, 0, (alea - 0.5) * 0.10);   // aucune pierre n'est la jumelle d'une autre
       poser(mesh, s + ep / 2);
       mesh.rotation.y = alea * 6.28;
       mesh.position.z += (alea - 0.5) * 0.055;                // un rang monté main n'est jamais plat
       mesh.position.multiplyScalar(1 + (alea - 0.5) * 0.004);
       if (def.forme === 'facette') mesh.rotation.y = i * 1.7;
-      const d = def.forme === 'perle' ? dim.diam * (0.94 + ((i * 37) % 13) / 100) : dim.diam;
+      const d = (def.forme === 'perle' ? dim.diam * (0.94 + ((i * 37) % 13) / 100) : dim.diam) * serrage;
       const sy = def.forme === 'perle' ? d : Math.min(ep * 0.99, dim.ep * 1.3);
       mesh.scale.set(d, sy, d);
       mesh.userData.index = i;
       groupe.add(mesh);
       perles.push({ mesh, def, scale: new THREE.Vector3(d, sy, d) });
+
+      if (noue) {                                  // un nœud de chaque côté de la perle
+        const matNoeud = new THREE.MeshPhysicalMaterial({
+          color: fil.hex,
+          roughness: fil.metal ? 0.25 : 0.82,
+          metalness: fil.metal ? 1 : 0.04,
+          bumpMap: grain, bumpScale: 0.03
+        });
+        const bord = Math.min(ep * 0.5 - 0.02, sy * 0.5 + 0.13);
+        [s + ep / 2 - bord, s + ep / 2 + bord].forEach(pos => {
+          const noeud = new THREE.Mesh(GEO.noeud, matNoeud);
+          poser(noeud, pos);
+          noeud.scale.setScalar(0.125 + 0.055 * serrage);
+          noeud.rotation.y = alea * 5;
+          groupe.add(noeud);
+          perles.push({ mesh: noeud, def, scale: noeud.scale.clone(), fixe: true });
+        });
+      }
       s += ep;
     }
 
@@ -405,7 +472,7 @@ const scene3D = (() => {
 
   function cliquerPerle() {
     rayon.setFromCamera(pointeur, camera);
-    const touches = rayon.intersectObjects(perles.map(p => p.mesh), false);
+    const touches = rayon.intersectObjects(perles.filter(p => !p.fixe).map(p => p.mesh), false);
     if (!touches.length) return;
     const i = touches[0].object.userData.index;
     etat.composition = 'libre';
@@ -440,7 +507,7 @@ const scene3D = (() => {
     // survol
     if (!glisse && perles.length) {
       rayon.setFromCamera(pointeur, camera);
-      const t = rayon.intersectObjects(perles.map(p => p.mesh), false);
+      const t = rayon.intersectObjects(perles.filter(p => !p.fixe).map(p => p.mesh), false);
       const nouveau = t.length ? t[0].object.userData.index : null;
       if (nouveau !== survol) {
         survol = nouveau;
@@ -494,17 +561,17 @@ function batirInterface() {
   const zonePierres = $('[data-pierres]');
   zonePierres.innerHTML = Object.entries(PIERRES).map(([id, p]) => `
     <button class="pierre" type="button" data-pierre="${id}" aria-pressed="${id === etat.pierre}" title="${p.note}">
-      <i style="background:${p.met
-        ? `linear-gradient(135deg,#ffffff,${hex6(p.hex)},#5f6669)`
-        : p.iris
-          ? `radial-gradient(circle at 32% 28%, #ffffff, ${hex6(p.hex)} 62%, #0d1413)`
-          : `radial-gradient(circle at 32% 28%, #ffffff55, ${hex6(p.hex)} 58%)`}"></i>
+      <i style="background-image:url('/assets/tex/${id}.jpg')"></i>
       ${p.nom}
     </button>`).join('');
 
   /* compositions */
   $('[data-compositions]').innerHTML = COMPOSITIONS.map(c =>
     `<button type="button" data-composition="${c.id}" aria-pressed="${c.id === etat.composition}">${c.nom}</button>`).join('');
+
+  /* montage */
+  $('[data-montages]').innerHTML = MONTAGES.map(m =>
+    `<button type="button" data-montage="${m.id}" aria-pressed="${m.id === etat.montage}">${m.nom}</button>`).join('');
 
   /* pièce centrale */
   $('[data-centres]').innerHTML = CENTRES.map(c =>
@@ -518,6 +585,8 @@ function majInterface() {
     b.setAttribute('aria-pressed', String(b.dataset.pierre === etat.pierre)));
   document.querySelectorAll('[data-composition]').forEach(b =>
     b.setAttribute('aria-pressed', String(b.dataset.composition === etat.composition)));
+  document.querySelectorAll('[data-montage]').forEach(b =>
+    b.setAttribute('aria-pressed', String(b.dataset.montage === etat.montage)));
   document.querySelectorAll('[data-centre]').forEach(b =>
     b.setAttribute('aria-pressed', String(b.dataset.centre === etat.centre)));
 
@@ -528,12 +597,14 @@ function majInterface() {
   $('[data-prix]').textContent = prix() + ' €';
   $('[data-recap]').innerHTML = inventaire()
     .map(([id, n]) => `<b>${n} ×</b> ${PIERRES[id].nom}`).join(' &nbsp;·&nbsp; ')
-    + `<br>${nbSlots()} emplacements sur ${FILS.find(f => f.id === etat.fil).nom.toLowerCase()}`
+    + `<br>${etat.slots.length} emplacements sur ${FILS.find(f => f.id === etat.fil).nom.toLowerCase()}`
     + (etat.gravure ? `<br>Gravure : « ${etat.gravure} »` : '');
 }
 
 function rafraichir() {
+  if (etat.composition !== 'libre') etat.nb = nbSlots();
   composer();
+  if (etat.composition !== 'libre') ajuster();
   scene3D?.construire();
   majInterface();
 }
@@ -551,6 +622,7 @@ function brancher() {
       if (etat.composition !== 'libre') rafraichir(); else majInterface();
     }
     else if (b.dataset.composition) { etat.composition = b.dataset.composition; rafraichir(); }
+    else if (b.dataset.montage) { etat.montage = b.dataset.montage; rafraichir(); }
     else if (b.dataset.centre) { etat.centre = b.dataset.centre; rafraichir(); }
   });
 

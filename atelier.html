@@ -30,7 +30,7 @@
 </div>
 <svg class="curseur" data-curseur viewBox="0 0 200 200" aria-hidden="true" style="fill:currentColor"><use href="#etoile"/></svg>
 <div class="progression" data-progression><span></span></div>
-<div class="fil" data-fil><span class="fil__remplissage" data-fil-remplissage></span></div>
+<div class="fil" data-fil aria-hidden="true"></div>
 <div class="message" data-message role="status" aria-live="polite"></div>
 <header class="entete">
   <a class="marque" href="/" aria-label="M'jy, accueil">
@@ -106,6 +106,11 @@
       </section>
 
       <section class="groupe">
+        <div class="groupe__entete"><span class="groupe__nom">Montage</span></div>
+        <div class="segments" data-montages></div>
+      </section>
+
+      <section class="groupe">
         <div class="groupe__entete"><span class="groupe__nom">Perle centrale</span></div>
         <div class="segments" data-centres></div>
       </section>
@@ -145,7 +150,7 @@
           <svg class="etoile marque__etoile" aria-hidden="true" style="fill:none;stroke:currentColor;stroke-width:4"><use href="#etoile"/></svg>
           <span class="marque__nom">M'jy<small>bijoux</small></span>
         </a>
-        <p class="doux mesure--courte" style="font-size:var(--t-s)">Bijoux d'éclat d'âme, assemblés main en Guadeloupe. Pierres véritables, perles de Tahiti, argent 925.</p>
+        <p class="doux mesure--courte" style="font-size:var(--t-s)">Terre, mer, émotions. Bijoux d'éclat d'âme assemblés main en Guadeloupe : pierres véritables, perles de Tahiti, argent 925.</p>
       </div>
       <div>
         <p class="pied__titre">Le site</p>

@@ -58,7 +58,7 @@ Exemple : une turquoise est à 2,60 € la perle. Sur un bracelet de 17 cm (40 e
 
 Toutes les images sont dans `assets/img/`. Pour changer une photo, remplacez le fichier **en gardant exactement le même nom**. Format conseillé : JPEG, portrait 3/4, environ 1200 px de large.
 
-Les visuels actuels proviennent des publications Instagram et sont donc en basse définition. Remplacez-les par les originaux dès que possible : c'est ce qui fera le plus gros saut de qualité sur le site.
+Les fichiers `p-*.jpg` sont les visuels produits, `m-*.jpg` les visuels de marque, les autres viennent des publications Instagram et restent en basse définition : ce sont eux à remplacer en priorité.
 
 Photo de couverture de la page d'accueil : `bracelet-signature.jpg`.
 
@@ -91,10 +91,32 @@ Si vous voulez un jour recevoir les demandes par e-mail sans que le visiteur ouv
 
 ---
 
+## Les textures des pierres
+
+Les pierres du configurateur ne sont pas des aplats de couleur : chaque matière a une vraie texture dans `assets/tex/` (`turquoise.jpg` pour la couleur, `turquoise-r.jpg` pour le relief et la brillance). Elles servent aussi de pastilles dans le panneau de réglages.
+
+Pour changer une matière, remplacez les deux fichiers en gardant les noms, en 256 × 256 px et raccordables (l'image doit pouvoir se répéter sans couture). Le script qui les a fabriquées est reproductible : bruit fractal filtré en Fourier, veines en bruit crêté, rayures étirées pour les métaux.
+
+## Le fil
+
+Le fil turquoise qui descend à gauche de chaque page est dessiné en SVG par `js/main.js` : deux brins sinusoïdaux qui se croisent, chacun interrompu un croisement sur deux pour passer sous l'autre. Il se remplit de turquoise au fur et à mesure du défilement, une perle d'argent s'enfile à chaque section et l'étoile M'jy suit la progression.
+
+Réglages dans `js/main.js`, fonction `dessiner()` : `L` la largeur, `A` l'amplitude des brins, `P` la période. Couleurs et épaisseurs dans `css/style.css`, section 5.
+
+## Les textures de l'atelier
+
+Les matières du configurateur sont fabriquées par `textures.py` (fourni à la racine, hors site) et enregistrées dans `assets/tex/` : pour chaque pierre, une image de couleur (`turquoise.jpg`) et une carte de rugosité et de relief (`turquoise-r.jpg`). Pour changer l'aspect d'une pierre, modifiez ses couleurs dans `textures.py` et relancez `python3 textures.py`, ou remplacez directement les deux JPEG en gardant les noms.
+
+## Le fil
+
+Le fil tressé qui traverse les pages est dessiné en SVG par `js/main.js`. Il suit la lecture : les deux brins se teintent de turquoise au fur et à mesure, une perle d'argent s'allume à chaque section, et une étoile M'jy descend le long du fil. Amplitude et période de la torsade se règlent dans la fonction `dessiner()`.
+
 ## Le configurateur, en bref
 
 - Tour de poignet de 14 à 21 cm : le nombre d'emplacements s'ajuste tout seul.
-- Huit liens, douze pierres véritables, quatre répartitions.
+- Neuf liens (coton ciré, cuir, chaîne argent), douze pierres véritables, quatre répartitions.
+- Montage serré ou noué : les nœuds entre les perles sont modélisés, comme sur les pièces montées sur cuir.
+- Le nombre d'emplacements se recale tout seul : une perle de Tahiti prend deux fois la place d'une rondelle.
 - **Un clic sur une perle la remplace** par la pierre sélectionnée : c'est là que se fait le vrai mélange.
 - « Composer pour moi » propose une harmonie cohérente à retoucher ensuite.
 - Le récapitulatif part sur WhatsApp, se copie, et l'aperçu 3D se télécharge en image.
