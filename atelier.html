@@ -1,0 +1,177 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>L'Atelier sur mesure — M'jy</title>
+<meta name="description" content="Composez votre bracelet M'jy en 3D : couleur du lien, nombre et nature des pierres, perle centrale, gravure.">
+<meta name="theme-color" content="#14201F">
+<meta property="og:title" content="L'Atelier sur mesure — M'jy">
+<meta property="og:description" content="Composez votre bracelet M'jy en 3D : couleur du lien, nombre et nature des pierres, perle centrale, gravure.">
+<meta property="og:type" content="website">
+<meta property="og:image" content="/assets/img/bracelet-signature.jpg">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Marcellus&family=Jost:wght@200;300;400&family=Parisienne&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/css/style.css">
+</head>
+<body class="fond-sombre">
+<a class="saut-contenu" href="#contenu">Aller au contenu</a>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false">
+  <symbol id="etoile" viewBox="0 0 200 200">
+    <path d="M 100.00 2.00 C 108.84 28.02, 115.16 36.83, 122.20 46.41 C 133.94 44.61, 144.65 42.85, 169.30 30.70 C 157.15 55.35, 155.39 66.06, 153.59 77.80 C 163.17 84.84, 171.98 91.16, 198.00 100.00 C 171.98 108.84, 163.17 115.16, 153.59 122.20 C 155.39 133.94, 157.15 144.65, 169.30 169.30 C 144.65 157.15, 133.94 155.39, 122.20 153.59 C 115.16 163.17, 108.84 171.98, 100.00 198.00 C 91.16 171.98, 84.84 163.17, 77.80 153.59 C 66.06 155.39, 55.35 157.15, 30.70 169.30 C 42.85 144.65, 44.61 133.94, 46.41 122.20 C 36.83 115.16, 28.02 108.84, 2.00 100.00 C 28.02 91.16, 36.83 84.84, 46.41 77.80 C 44.61 66.06, 42.85 55.35, 30.70 30.70 C 55.35 42.85, 66.06 44.61, 77.80 46.41 C 84.84 36.83, 91.16 28.02, 100.00 2.00 Z"/>
+    <path d="M 100.00 48.00 L 104.97 87.99 L 136.77 63.23 L 112.01 95.03 L 152.00 100.00 L 112.01 104.97 L 136.77 136.77 L 104.97 112.01 L 100.00 152.00 L 95.03 112.01 L 63.23 136.77 L 87.99 104.97 L 48.00 100.00 L 87.99 95.03 L 63.23 63.23 L 95.03 87.99 L 100.00 48.00 Z"/>
+  </symbol>
+</svg>
+<div class="rideau" data-rideau>
+  <svg class="rideau__etoile" viewBox="0 0 200 200" aria-hidden="true"><path d="M 100.00 2.00 C 108.84 28.02, 115.16 36.83, 122.20 46.41 C 133.94 44.61, 144.65 42.85, 169.30 30.70 C 157.15 55.35, 155.39 66.06, 153.59 77.80 C 163.17 84.84, 171.98 91.16, 198.00 100.00 C 171.98 108.84, 163.17 115.16, 153.59 122.20 C 155.39 133.94, 157.15 144.65, 169.30 169.30 C 144.65 157.15, 133.94 155.39, 122.20 153.59 C 115.16 163.17, 108.84 171.98, 100.00 198.00 C 91.16 171.98, 84.84 163.17, 77.80 153.59 C 66.06 155.39, 55.35 157.15, 30.70 169.30 C 42.85 144.65, 44.61 133.94, 46.41 122.20 C 36.83 115.16, 28.02 108.84, 2.00 100.00 C 28.02 91.16, 36.83 84.84, 46.41 77.80 C 44.61 66.06, 42.85 55.35, 30.70 30.70 C 55.35 42.85, 66.06 44.61, 77.80 46.41 C 84.84 36.83, 91.16 28.02, 100.00 2.00 Z"/><path d="M 100.00 48.00 L 104.97 87.99 L 136.77 63.23 L 112.01 95.03 L 152.00 100.00 L 112.01 104.97 L 136.77 136.77 L 104.97 112.01 L 100.00 152.00 L 95.03 112.01 L 63.23 136.77 L 87.99 104.97 L 48.00 100.00 L 87.99 95.03 L 63.23 63.23 L 95.03 87.99 L 100.00 48.00 Z"/></svg>
+  <span class="sr-only" style="position:absolute;left:-9999px">Chargement</span>
+</div>
+<svg class="curseur" data-curseur viewBox="0 0 200 200" aria-hidden="true" style="fill:currentColor"><use href="#etoile"/></svg>
+<div class="progression" data-progression><span></span></div>
+<div class="fil" data-fil><span class="fil__remplissage" data-fil-remplissage></span></div>
+<div class="message" data-message role="status" aria-live="polite"></div>
+<header class="entete">
+  <a class="marque" href="/" aria-label="M'jy, accueil">
+    <svg class="etoile marque__etoile" aria-hidden="true" style="fill:none;stroke:currentColor;stroke-width:4"><use href="#etoile"/></svg>
+    <span class="marque__nom">M'jy<small>bijoux</small></span>
+  </a>
+  <nav class="nav" aria-label="Navigation principale">
+    <a href="/">Accueil</a>
+    <a href="/collection.html">Collection</a>
+    <a href="/atelier.html" aria-current="page">Sur mesure</a>
+    <a href="/contact.html">Contact</a>
+  </nav>
+  <button class="bouton-menu" data-menu type="button" aria-expanded="false" aria-label="Ouvrir le menu"><span></span></button>
+</header>
+
+<main id="contenu" class="atelier">
+  <div class="atelier__grille">
+
+    <div class="scene" data-scene>
+      <p class="scene__etat" data-etat-scene hidden></p>
+      <span class="scene__selection" data-selection></span>
+      <div class="scene__prix">
+        <b data-prix>150 €</b>
+        <span>estimation</span>
+      </div>
+      <div class="scene__aide">
+        <span>Glissez pour tourner</span>
+        <span class="indice-souris">Molette pour approcher</span>
+        <span class="indice-tactile">Pincez pour approcher</span>
+        <span>Touchez une perle pour la remplacer</span>
+      </div>
+    </div>
+
+    <aside class="panneau" data-panneau aria-label="Réglages du bracelet">
+      <h1 class="panneau__titre">Votre bracelet</h1>
+      <p class="panneau__intro">Chaque réglage se voit immédiatement sur la pièce. Rien n'est validé tant que vous ne l'envoyez pas.</p>
+
+      <section class="groupe">
+        <div class="groupe__entete">
+          <span class="groupe__nom">Tour de poignet</span>
+          <span class="groupe__valeur" data-valeur-taille>17 cm</span>
+        </div>
+        <input class="curseur-valeur" type="range" min="14" max="21" step="0.5" value="17" data-taille aria-label="Tour de poignet en centimètres">
+      </section>
+
+      <section class="groupe">
+        <div class="groupe__entete">
+          <span class="groupe__nom">Lien</span>
+          <span class="groupe__valeur" data-valeur-fil>Coton ciré noir</span>
+        </div>
+        <div class="pastilles" data-fils></div>
+      </section>
+
+      <section class="groupe">
+        <div class="groupe__entete">
+          <span class="groupe__nom">Pierre choisie</span>
+          <span class="groupe__valeur" data-valeur-pierre>Turquoise</span>
+        </div>
+        <div class="pierres" data-pierres></div>
+      </section>
+
+      <section class="groupe">
+        <div class="groupe__entete">
+          <span class="groupe__nom">Quantité de pierres</span>
+          <span class="groupe__valeur" data-valeur-densite>11 pierres</span>
+        </div>
+        <input class="curseur-valeur" type="range" min="12" max="100" step="1" value="50" data-densite aria-label="Proportion de pierres sur le fil">
+      </section>
+
+      <section class="groupe">
+        <div class="groupe__entete"><span class="groupe__nom">Répartition</span></div>
+        <div class="segments" data-compositions></div>
+      </section>
+
+      <section class="groupe">
+        <div class="groupe__entete"><span class="groupe__nom">Perle centrale</span></div>
+        <div class="segments" data-centres></div>
+      </section>
+
+      <section class="groupe">
+        <div class="groupe__entete">
+          <span class="groupe__nom">Gravure du fermoir</span>
+          <span class="groupe__valeur">+ 25 €</span>
+        </div>
+        <div class="champ">
+          <input type="text" maxlength="14" placeholder="Un prénom, une date, deux lettres" data-gravure aria-label="Texte gravé sur le fermoir">
+        </div>
+      </section>
+
+      <div class="recap" data-recap></div>
+
+      <div class="actions">
+        <button class="bouton bouton--plein" type="button" data-envoyer data-whatsapp="590690000000">Envoyer ma création à l'atelier</button>
+        <button class="bouton bouton--clair" type="button" data-hasard>Composer pour moi</button>
+        <button class="bouton bouton--clair" type="button" data-telecharger>Télécharger l'aperçu</button>
+        <button class="bouton bouton--clair" type="button" data-copier>Copier le récapitulatif</button>
+      </div>
+
+      <p class="note-formulaire" style="margin-top:1.2rem;color:var(--texte-inverse-doux)">
+        L'estimation couvre les matières et le montage. Le prix définitif est confirmé par l'atelier selon les perles disponibles.
+      </p>
+    </aside>
+
+  </div>
+</main>
+<script type="module" src="/js/atelier.js"></script>
+<footer class="pied">
+  <div class="enveloppe">
+    <div class="pied__haut">
+      <div>
+        <a class="marque" href="/" style="margin-bottom:1rem">
+          <svg class="etoile marque__etoile" aria-hidden="true" style="fill:none;stroke:currentColor;stroke-width:4"><use href="#etoile"/></svg>
+          <span class="marque__nom">M'jy<small>bijoux</small></span>
+        </a>
+        <p class="doux mesure--courte" style="font-size:var(--t-s)">Bijoux d'éclat d'âme, assemblés main en Guadeloupe. Pierres véritables, perles de Tahiti, argent 925.</p>
+      </div>
+      <div>
+        <p class="pied__titre">Le site</p>
+        <ul class="pied__liens">
+          <li><a href="/collection.html">Collection</a></li>
+          <li><a href="/atelier.html">Composer sur mesure</a></li>
+          <li><a href="/contact.html">Contact et commandes</a></li>
+          <li><a href="/mentions.html">Mentions légales</a></li>
+        </ul>
+      </div>
+      <div>
+        <p class="pied__titre">Rester proche</p>
+        <ul class="pied__liens">
+          <li><a href="https://www.instagram.com/mjy.jewelry/" target="_blank" rel="noopener">Instagram @mjy.jewelry</a></li>
+          <li><a href="https://wa.me/590690000000" target="_blank" rel="noopener">WhatsApp</a></li>
+          <li><a href="mailto:bonjour@mjy-bijoux.fr">bonjour@mjy-bijoux.fr</a></li>
+          <li><a href="/contact.html">Le Gosier, Guadeloupe</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="pied__bas">
+      <span>© <span data-annee>2026</span> M'jy. Chaque pièce est unique.</span>
+      <span>Livraison Guadeloupe, France et international</span>
+    </div>
+  </div>
+</footer>
+<script src="/js/main.js"></script>
+</body>
+</html>

@@ -1,0 +1,225 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Collection — M'jy</title>
+<meta name="description" content="Bracelets, sautoirs, ras-de-cou et bracelets de cheville en perles de Tahiti, turquoise et argent 925.">
+<meta name="theme-color" content="#14201F">
+<meta property="og:title" content="Collection — M'jy">
+<meta property="og:description" content="Bracelets, sautoirs, ras-de-cou et bracelets de cheville en perles de Tahiti, turquoise et argent 925.">
+<meta property="og:type" content="website">
+<meta property="og:image" content="/assets/img/bracelet-signature.jpg">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Marcellus&family=Jost:wght@200;300;400&family=Parisienne&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+<a class="saut-contenu" href="#contenu">Aller au contenu</a>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false">
+  <symbol id="etoile" viewBox="0 0 200 200">
+    <path d="M 100.00 2.00 C 108.84 28.02, 115.16 36.83, 122.20 46.41 C 133.94 44.61, 144.65 42.85, 169.30 30.70 C 157.15 55.35, 155.39 66.06, 153.59 77.80 C 163.17 84.84, 171.98 91.16, 198.00 100.00 C 171.98 108.84, 163.17 115.16, 153.59 122.20 C 155.39 133.94, 157.15 144.65, 169.30 169.30 C 144.65 157.15, 133.94 155.39, 122.20 153.59 C 115.16 163.17, 108.84 171.98, 100.00 198.00 C 91.16 171.98, 84.84 163.17, 77.80 153.59 C 66.06 155.39, 55.35 157.15, 30.70 169.30 C 42.85 144.65, 44.61 133.94, 46.41 122.20 C 36.83 115.16, 28.02 108.84, 2.00 100.00 C 28.02 91.16, 36.83 84.84, 46.41 77.80 C 44.61 66.06, 42.85 55.35, 30.70 30.70 C 55.35 42.85, 66.06 44.61, 77.80 46.41 C 84.84 36.83, 91.16 28.02, 100.00 2.00 Z"/>
+    <path d="M 100.00 48.00 L 104.97 87.99 L 136.77 63.23 L 112.01 95.03 L 152.00 100.00 L 112.01 104.97 L 136.77 136.77 L 104.97 112.01 L 100.00 152.00 L 95.03 112.01 L 63.23 136.77 L 87.99 104.97 L 48.00 100.00 L 87.99 95.03 L 63.23 63.23 L 95.03 87.99 L 100.00 48.00 Z"/>
+  </symbol>
+</svg>
+<div class="rideau" data-rideau>
+  <svg class="rideau__etoile" viewBox="0 0 200 200" aria-hidden="true"><path d="M 100.00 2.00 C 108.84 28.02, 115.16 36.83, 122.20 46.41 C 133.94 44.61, 144.65 42.85, 169.30 30.70 C 157.15 55.35, 155.39 66.06, 153.59 77.80 C 163.17 84.84, 171.98 91.16, 198.00 100.00 C 171.98 108.84, 163.17 115.16, 153.59 122.20 C 155.39 133.94, 157.15 144.65, 169.30 169.30 C 144.65 157.15, 133.94 155.39, 122.20 153.59 C 115.16 163.17, 108.84 171.98, 100.00 198.00 C 91.16 171.98, 84.84 163.17, 77.80 153.59 C 66.06 155.39, 55.35 157.15, 30.70 169.30 C 42.85 144.65, 44.61 133.94, 46.41 122.20 C 36.83 115.16, 28.02 108.84, 2.00 100.00 C 28.02 91.16, 36.83 84.84, 46.41 77.80 C 44.61 66.06, 42.85 55.35, 30.70 30.70 C 55.35 42.85, 66.06 44.61, 77.80 46.41 C 84.84 36.83, 91.16 28.02, 100.00 2.00 Z"/><path d="M 100.00 48.00 L 104.97 87.99 L 136.77 63.23 L 112.01 95.03 L 152.00 100.00 L 112.01 104.97 L 136.77 136.77 L 104.97 112.01 L 100.00 152.00 L 95.03 112.01 L 63.23 136.77 L 87.99 104.97 L 48.00 100.00 L 87.99 95.03 L 63.23 63.23 L 95.03 87.99 L 100.00 48.00 Z"/></svg>
+  <span class="sr-only" style="position:absolute;left:-9999px">Chargement</span>
+</div>
+<svg class="curseur" data-curseur viewBox="0 0 200 200" aria-hidden="true" style="fill:currentColor"><use href="#etoile"/></svg>
+<div class="progression" data-progression><span></span></div>
+<div class="fil" data-fil><span class="fil__remplissage" data-fil-remplissage></span></div>
+<div class="message" data-message role="status" aria-live="polite"></div>
+<header class="entete">
+  <a class="marque" href="/" aria-label="M'jy, accueil">
+    <svg class="etoile marque__etoile" aria-hidden="true" style="fill:none;stroke:currentColor;stroke-width:4"><use href="#etoile"/></svg>
+    <span class="marque__nom">M'jy<small>bijoux</small></span>
+  </a>
+  <nav class="nav" aria-label="Navigation principale">
+    <a href="/">Accueil</a>
+    <a href="/collection.html" aria-current="page">Collection</a>
+    <a href="/atelier.html">Sur mesure</a>
+    <a href="/contact.html">Contact</a>
+  </nav>
+  <button class="bouton-menu" data-menu type="button" aria-expanded="false" aria-label="Ouvrir le menu"><span></span></button>
+</header>
+
+<main id="contenu">
+  <section class="section entete-page" data-perle="Collection">
+    <div class="enveloppe">
+      <p class="intitule"><svg class="etoile" aria-hidden="true" style="fill:currentColor"><use href="#etoile"/></svg> Collection</p>
+      <h1>Dix pièces, et<br>autant de variantes</h1>
+      <p class="doux mesure">Ce que vous voyez ici a déjà été porté. Chaque modèle se refait à votre tour de poignet, dans les pierres de votre choix : ce sont des points de départ, pas des références figées.</p>
+      <p style="margin-top:1.6rem"><a class="lien-souligne" href="/atelier.html">Composer une pièce unique <svg class="etoile" aria-hidden="true" style="fill:currentColor"><use href="#etoile"/></svg></a></p>
+    </div>
+  </section>
+
+  <section class="section section--serree" data-perle="Pièces">
+    <div class="enveloppe">
+      <div class="pieces">
+      <article class="piece  reveler">
+        <div class="piece__cadre voile">
+          <img src="/assets/img/bracelet-signature.jpg" alt="Bracelet M'jy — Anneaux d'argent 925, turquoise, magnésite et une perle de Tahiti baroque" loading="lazy" width="560" height="746">
+          <span class="piece__etiquette">Pièce première</span>
+        </div>
+        <div class="piece__pied">
+          <h3 class="piece__nom">Bracelet M'jy</h3>
+          <span class="piece__prix">150 €</span>
+        </div>
+        <p class="piece__matiere">Anneaux d'argent 925, turquoise, magnésite et une perle de Tahiti baroque</p>
+      </article>
+      <article class="piece piece--haute reveler">
+        <div class="piece__cadre voile">
+          <img src="/assets/img/turquoise-bois.jpg" alt="Bracelet Lagon — Turquoise véritable et anneaux d'argent martelés" loading="lazy" width="560" height="746">
+          <span class="piece__etiquette">Turquoise</span>
+        </div>
+        <div class="piece__pied">
+          <h3 class="piece__nom">Bracelet Lagon</h3>
+          <span class="piece__prix">165 €</span>
+        </div>
+        <p class="piece__matiere">Turquoise véritable et anneaux d'argent martelés</p>
+      </article>
+      <article class="piece piece--basse reveler">
+        <div class="piece__cadre voile">
+          <img src="/assets/img/collier-eau.jpg" alt="Sautoir Écume — Perles de Tahiti et perles dorées nouées sur coton ciré" loading="lazy" width="560" height="746">
+          <span class="piece__etiquette">Sautoir</span>
+        </div>
+        <div class="piece__pied">
+          <h3 class="piece__nom">Sautoir Écume</h3>
+          <span class="piece__prix">290 €</span>
+        </div>
+        <p class="piece__matiere">Perles de Tahiti et perles dorées nouées sur coton ciré</p>
+      </article>
+      <article class="piece  reveler">
+        <div class="piece__cadre voile">
+          <img src="/assets/img/bracelet-granit.jpg" alt="Bracelet Rivage — Perles de Tahiti grises et dorées, nœuds faits main" loading="lazy" width="560" height="746">
+          <span class="piece__etiquette">Perles</span>
+        </div>
+        <div class="piece__pied">
+          <h3 class="piece__nom">Bracelet Rivage</h3>
+          <span class="piece__prix">260 €</span>
+        </div>
+        <p class="piece__matiere">Perles de Tahiti grises et dorées, nœuds faits main</p>
+      </article>
+      <article class="piece piece--haute reveler">
+        <div class="piece__cadre voile">
+          <img src="/assets/img/collier-ras-cou.jpg" alt="Ras-de-cou Goutte — Une seule perle de Tahiti sur lien fin ajustable" loading="lazy" width="560" height="746">
+          <span class="piece__etiquette">Minimal</span>
+        </div>
+        <div class="piece__pied">
+          <h3 class="piece__nom">Ras-de-cou Goutte</h3>
+          <span class="piece__prix">180 €</span>
+        </div>
+        <p class="piece__matiere">Une seule perle de Tahiti sur lien fin ajustable</p>
+      </article>
+      <article class="piece piece--basse reveler">
+        <div class="piece__cadre voile">
+          <img src="/assets/img/perles-bois.jpg" alt="Collier Bois Flotté — Perles baroques crème et grises, longueur libre" loading="lazy" width="560" height="746">
+          <span class="piece__etiquette">Baroque</span>
+        </div>
+        <div class="piece__pied">
+          <h3 class="piece__nom">Collier Bois Flotté</h3>
+          <span class="piece__prix">240 €</span>
+        </div>
+        <p class="piece__matiere">Perles baroques crème et grises, longueur libre</p>
+      </article>
+      <article class="piece  reveler">
+        <div class="piece__cadre voile">
+          <img src="/assets/img/sautoir-chemise.jpg" alt="Sautoir Nuit Claire — Perles de Tahiti et argent 925, porté long ou doublé" loading="lazy" width="560" height="746">
+          <span class="piece__etiquette">Sautoir</span>
+        </div>
+        <div class="piece__pied">
+          <h3 class="piece__nom">Sautoir Nuit Claire</h3>
+          <span class="piece__prix">310 €</span>
+        </div>
+        <p class="piece__matiere">Perles de Tahiti et argent 925, porté long ou doublé</p>
+      </article>
+      <article class="piece piece--haute reveler">
+        <div class="piece__cadre voile">
+          <img src="/assets/img/bracelet-clair.jpg" alt="Bracelet Sel — Magnésite, hématite facettée et éclats de turquoise" loading="lazy" width="560" height="746">
+          <span class="piece__etiquette">Clair</span>
+        </div>
+        <div class="piece__pied">
+          <h3 class="piece__nom">Bracelet Sel</h3>
+          <span class="piece__prix">155 €</span>
+        </div>
+        <p class="piece__matiere">Magnésite, hématite facettée et éclats de turquoise</p>
+      </article>
+      <article class="piece piece--basse reveler">
+        <div class="piece__cadre voile">
+          <img src="/assets/img/perles-noires.jpg" alt="Manchette Nuit — Quatre rangs de perles sombres, fermoir argent" loading="lazy" width="560" height="746">
+          <span class="piece__etiquette">Empilement</span>
+        </div>
+        <div class="piece__pied">
+          <h3 class="piece__nom">Manchette Nuit</h3>
+          <span class="piece__prix">Sur mesure</span>
+        </div>
+        <p class="piece__matiere">Quatre rangs de perles sombres, fermoir argent</p>
+      </article>
+      <article class="piece  reveler">
+        <div class="piece__cadre voile">
+          <img src="/assets/img/duo-collier-bracelet.jpg" alt="Duo Sillage — Le bracelet et le sautoir composés ensemble" loading="lazy" width="560" height="746">
+          <span class="piece__etiquette">Duo</span>
+        </div>
+        <div class="piece__pied">
+          <h3 class="piece__nom">Duo Sillage</h3>
+          <span class="piece__prix">395 €</span>
+        </div>
+        <p class="piece__matiere">Le bracelet et le sautoir composés ensemble</p>
+      </article>
+      </div>
+    </div>
+  </section>
+
+  <section class="section section--sombre" data-perle="Entretien">
+    <div class="enveloppe">
+      <p class="intitule"><svg class="etoile" aria-hidden="true" style="fill:currentColor"><use href="#etoile"/></svg> Bon à savoir</p>
+      <dl class="matieres" style="margin-top:0">
+        <div><dt>Délai</dt><dd>Une à deux semaines de montage. Plus long si une perle particulière doit être cherchée.</dd></div>
+        <div><dt>Mesure</dt><dd>Un mètre de couturière autour du poignet, ou une ficelle puis une règle. On ajoute l'aisance.</dd></div>
+        <div><dt>Entretien</dt><dd>La mer ne fait rien aux pierres. Rincez à l'eau douce, séchez à plat, évitez les parfums sur les perles.</dd></div>
+        <div><dt>Reprise</dt><dd>Un fil qui fatigue se remonte à l'atelier. Les pièces M'jy se réparent, elles ne se remplacent pas.</dd></div>
+      </dl>
+    </div>
+  </section>
+</main>
+<footer class="pied">
+  <div class="enveloppe">
+    <div class="pied__haut">
+      <div>
+        <a class="marque" href="/" style="margin-bottom:1rem">
+          <svg class="etoile marque__etoile" aria-hidden="true" style="fill:none;stroke:currentColor;stroke-width:4"><use href="#etoile"/></svg>
+          <span class="marque__nom">M'jy<small>bijoux</small></span>
+        </a>
+        <p class="doux mesure--courte" style="font-size:var(--t-s)">Bijoux d'éclat d'âme, assemblés main en Guadeloupe. Pierres véritables, perles de Tahiti, argent 925.</p>
+      </div>
+      <div>
+        <p class="pied__titre">Le site</p>
+        <ul class="pied__liens">
+          <li><a href="/collection.html">Collection</a></li>
+          <li><a href="/atelier.html">Composer sur mesure</a></li>
+          <li><a href="/contact.html">Contact et commandes</a></li>
+          <li><a href="/mentions.html">Mentions légales</a></li>
+        </ul>
+      </div>
+      <div>
+        <p class="pied__titre">Rester proche</p>
+        <ul class="pied__liens">
+          <li><a href="https://www.instagram.com/mjy.jewelry/" target="_blank" rel="noopener">Instagram @mjy.jewelry</a></li>
+          <li><a href="https://wa.me/590690000000" target="_blank" rel="noopener">WhatsApp</a></li>
+          <li><a href="mailto:bonjour@mjy-bijoux.fr">bonjour@mjy-bijoux.fr</a></li>
+          <li><a href="/contact.html">Le Gosier, Guadeloupe</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="pied__bas">
+      <span>© <span data-annee>2026</span> M'jy. Chaque pièce est unique.</span>
+      <span>Livraison Guadeloupe, France et international</span>
+    </div>
+  </div>
+</footer>
+<script src="/js/main.js"></script>
+</body>
+</html>
