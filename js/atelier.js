@@ -188,18 +188,18 @@ const scene3D = (() => {
   toile.width = 512; toile.height = 256;
   const ctx = toile.getContext('2d');
   const grad = ctx.createLinearGradient(0, 0, 0, 256);
-  grad.addColorStop(0, '#f4fbff');
-  grad.addColorStop(0.45, '#8fa6ad');
-  grad.addColorStop(0.62, '#2a3b3f');
-  grad.addColorStop(1, '#0a1211');
+  grad.addColorStop(0, '#f7f6f2');     // ciel d'atelier neutre : l'argent reste argent
+  grad.addColorStop(0.45, '#a6a49d');
+  grad.addColorStop(0.62, '#36352f');
+  grad.addColorStop(1, '#0e0e0c');
   ctx.fillStyle = grad; ctx.fillRect(0, 0, 512, 256);
   const halo = ctx.createRadialGradient(150, 60, 5, 150, 60, 130);
   halo.addColorStop(0, 'rgba(255,255,255,1)');
   halo.addColorStop(1, 'rgba(255,255,255,0)');
   ctx.fillStyle = halo; ctx.fillRect(0, 0, 512, 256);
   const halo2 = ctx.createRadialGradient(400, 110, 5, 400, 110, 150);
-  halo2.addColorStop(0, 'rgba(120,220,245,.85)');
-  halo2.addColorStop(1, 'rgba(120,220,245,0)');
+  halo2.addColorStop(0, 'rgba(255,238,214,.75)');   // lumière de fenêtre chaude, pas de dominante
+  halo2.addColorStop(1, 'rgba(255,238,214,0)');
   ctx.fillStyle = halo2; ctx.fillRect(0, 0, 512, 256);
 
   const texEnv = new THREE.CanvasTexture(toile);
@@ -209,9 +209,9 @@ const scene3D = (() => {
   scene.environment = pmrem.fromEquirectangular(texEnv).texture;
   pmrem.dispose(); texEnv.dispose();
 
-  scene.add(new THREE.HemisphereLight(0xdff3f7, 0x0b1413, 0.5));
+  scene.add(new THREE.HemisphereLight(0xf4f1ea, 0x14120f, 0.55));
   const cle = new THREE.DirectionalLight(0xffffff, 2.1); cle.position.set(6, 9, 10); scene.add(cle);
-  const contre = new THREE.DirectionalLight(0x5fd6ec, 1.1); contre.position.set(-8, -3, -6); scene.add(contre);
+  const contre = new THREE.DirectionalLight(0xdfe8ea, 0.9); contre.position.set(-8, -3, -6); scene.add(contre);
 
   const groupe = new THREE.Group();
   groupe.rotation.x = -0.52;
@@ -236,11 +236,13 @@ const scene3D = (() => {
   /* textures des matières (assets/tex) */
   const chargeur = new THREE.TextureLoader();
   const cache = {};
-  const texture = (id, suffixe) => {
-    const cle = id + (suffixe || '');
+  const texture = (id, suffixe, repetition) => {
+    const fichier = id + (suffixe || '');
+    const cle = fichier + (repetition ? '@' + repetition.join('x') : '');
     if (!cache[cle]) {
-      const t = chargeur.load('/assets/tex/' + cle + '.jpg');
+      const t = chargeur.load('/assets/tex/' + fichier + '.jpg');
       t.wrapS = t.wrapT = THREE.RepeatWrapping;
+      if (repetition) t.repeat.set(repetition[0], repetition[1]);
       t.anisotropy = renderer.capabilities.getMaxAnisotropy();
       if (!suffixe) t.colorSpace = THREE.SRGBColorSpace;
       cache[cle] = t;
@@ -277,22 +279,49 @@ const scene3D = (() => {
       color: 0xffffff,
       map: texture(id),
       roughnessMap: texture(id, '-r'),
-      bumpMap: texture(id, '-r'),
-      bumpScale: def.met ? 0.008 : (def.iris ? 0.006 : 0.028),
+      normalMap: texture(id, '-n'),
+      normalScale: new THREE.Vector2(1, 1).multiplyScalar(def.met ? 0.9 : (def.iris ? 0.3 : 0.55)),
       roughness: 1,
       metalness: def.met,
-      clearcoat: def.iris ? 0.45 : 0.12,
-      clearcoatRoughness: 0.05,
-      envMapIntensity: def.iris ? 0.62 : 1.3
+      clearcoat: def.iris ? 0.6 : (def.met ? 0 : (def.rug > 0.4 ? 0.08 : 0.3)),   // turquoise, larimar : mates
+      clearcoatRoughness: def.iris ? 0.04 : 0.12,
+      envMapIntensity: def.iris ? 0.7 : (def.met ? 1.35 : 0.9)
     });
     if (def.iris) {
-      m.iridescence = def.iris * 0.4;
-      m.iridescenceIOR = 1.5;
-      m.iridescenceThicknessRange = [220, 820];
-      m.sheen = 0.25;
-      m.sheenColor = new THREE.Color(0x9fdbe8);
+      // la perle : un corps satiné sous une couche de nacre très nette
+      m.clearcoat = 1;
+      m.clearcoatRoughness = 0.05;
+      m.envMapIntensity = 1.05;
+      m.iridescence = id === 'tahiti' ? 1 : 0.6;
+      m.iridescenceIOR = 1.6;
+      m.iridescenceThicknessRange = id === 'tahiti' ? [260, 700] : [300, 560];
+      m.sheen = 0.45;
+      m.sheenRoughness = 0.35;
+      m.sheenColor = new THREE.Color(id === 'tahiti' ? 0xb58fb8 : (id === 'nacre' ? 0xf5dfe0 : 0xf2d6a8));
     }
     return m;
+  };
+
+  /* le lien : vraie tresse de coton ciré, teintée à la couleur choisie */
+  const matLien = (fil, rep = [70, 1]) => {
+    if (fil.metal) {                     // chaîne d'argent : l'argent martelé, très serré
+      const m = materiau(PIERRES.argent, 'argent');
+      m.map = texture('argent', '', [90, 1]);
+      m.roughnessMap = texture('argent', '-r', [90, 1]);
+      m.normalMap = texture('argent', '-n', [90, 1]);
+      return m;
+    }
+    return new THREE.MeshPhysicalMaterial({
+      color: fil.hex,
+      map: texture('cordon', '', rep),
+      roughnessMap: texture('cordon', '-r', rep),
+      normalMap: texture('cordon', '-n', rep),
+      normalScale: new THREE.Vector2(1.4, 1.4),
+      roughness: 1, metalness: 0.02,
+      sheen: 0.5, sheenColor: new THREE.Color(0xffffff), sheenRoughness: 0.6,
+      clearcoat: 0.18, clearcoatRoughness: 0.4,      // la cire
+      envMapIntensity: 0.9
+    });
   };
 
   function construire() {
@@ -316,14 +345,8 @@ const scene3D = (() => {
     /* le lien */
     const fil = FILS.find(f => f.id === etat.fil);
     cordon = new THREE.Mesh(
-      new THREE.TorusGeometry(R, fil.metal ? 0.06 : 0.045, 12, 240),
-      new THREE.MeshPhysicalMaterial({
-        color: fil.hex,
-        roughness: fil.metal ? 0.2 : 0.78,
-        metalness: fil.metal ? 1 : 0.04,
-        clearcoat: fil.metal ? 0.4 : 0.15,
-        envMapIntensity: 1.1
-      })
+      new THREE.TorusGeometry(R, fil.metal ? 0.06 : 0.05, 16, 320),
+      matLien(fil)
     );
     groupe.add(cordon);
 
@@ -355,12 +378,7 @@ const scene3D = (() => {
       perles.push({ mesh, def, scale: new THREE.Vector3(d, sy, d) });
 
       if (noue) {                                  // un nœud de chaque côté de la perle
-        const matNoeud = new THREE.MeshPhysicalMaterial({
-          color: fil.hex,
-          roughness: fil.metal ? 0.25 : 0.82,
-          metalness: fil.metal ? 1 : 0.04,
-          bumpMap: grain, bumpScale: 0.03
-        });
+        const matNoeud = matLien(fil, [3, 2]);
         const bord = Math.min(ep * 0.5 - 0.02, sy * 0.5 + 0.13);
         [s + ep / 2 - bord, s + ep / 2 + bord].forEach(pos => {
           const noeud = new THREE.Mesh(GEO.noeud, matNoeud);
@@ -376,9 +394,8 @@ const scene3D = (() => {
 
     /* le fermoir T signé */
     fermoir = new THREE.Group();
-    const argent = new THREE.MeshPhysicalMaterial({
-      color: 0xdfe4e5, roughness: 0.22, metalness: 1, envMapIntensity: 1.4
-    });
+    const argent = materiau(PIERRES.argent, 'argent');
+    argent.normalScale.set(0.5, 0.5);
     const anneau = new THREE.Mesh(GEO.fermoirAnneau, argent);
     poser(anneau, -ECART_FERMOIR * 0.3);
     fermoir.add(anneau);
@@ -553,9 +570,7 @@ function batirInterface() {
   zoneFils.innerHTML = FILS.map(f => `
     <button class="pastille" type="button" data-fil="${f.id}" title="${f.nom}"
       aria-label="${f.nom}" aria-pressed="${f.id === etat.fil}"
-      style="background:${f.metal
-        ? `linear-gradient(135deg,#f2f5f5,${hex6(f.hex)},#8d9698)`
-        : hex6(f.hex)}"></button>`).join('');
+      style="background-color:${hex6(f.hex)};background-image:url('/assets/tex/${f.metal ? 'argent' : 'cordon'}.jpg')"></button>`).join('');
 
   /* pierres */
   const zonePierres = $('[data-pierres]');

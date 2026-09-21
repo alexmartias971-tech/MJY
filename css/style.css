@@ -123,36 +123,36 @@ p:last-child{margin-bottom:0}
 .etoile path{vector-effect:non-scaling-stroke}
 
 /* =========================================================
-   5. LE FIL — deux brins tressés sur toute la hauteur de page
+   5. LE FIL — une corde de coton ciré posée le long de la page
    ========================================================= */
 .fil{
-  position:fixed;top:0;left:0;height:100vh;height:100svh;
+  position:absolute;top:0;left:0;
   z-index:6;pointer-events:none;
-  animation:filRespire 14s ease-in-out infinite alternate;
+  animation:filRespire 11s ease-in-out infinite alternate;
+  transform-origin:50% 0;
 }
-@keyframes filRespire{from{transform:translateX(-1.5px)}to{transform:translateX(1.5px)}}
-
-.fil__toile{display:block;overflow:visible}
-.fil__brins path{fill:none;stroke-linecap:round}
-.fil__brins--fond path{stroke:var(--fil-brut);stroke-width:2}
-.fil__brins--vif path{
-  stroke:var(--lagon);stroke-width:2.6;
-  filter:drop-shadow(0 0 4px rgba(31,183,212,.45));
+@keyframes filRespire{
+  from{transform:translateX(-1.2px) skewY(-.15deg)}
+  to{transform:translateX(1.2px) skewY(.15deg)}
 }
-.fil__brins--vif{transition:clip-path .18s linear}
+.fil__toile{position:absolute;top:0;left:0;display:block}
+.fil__toile--vif{
+  transition:clip-path .25s linear;
+  filter:drop-shadow(0 0 3px rgba(31,183,212,.35));
+}
 
-/* la perle d'argent enfilée à chaque section */
+/* la perle d'argent enfilée après chaque boucle */
 .fil__perle{
-  position:absolute;width:11px;height:11px;border-radius:50%;
+  position:absolute;width:14px;height:14px;border-radius:50%;
   translate:-50% -50%;
-  background:radial-gradient(circle at 34% 30%,#ffffff,#b9c0c2 55%,#6d7678);
-  box-shadow:0 1px 3px rgba(0,0,0,.45);
-  transition:scale .7s var(--lent),box-shadow .7s ease,background .7s ease;
+  background:radial-gradient(circle at 34% 30%,#ffffff,#c3c9cb 45%,#6d7678 100%);
+  box-shadow:0 2px 4px rgba(0,0,0,.45),inset -1px -2px 3px rgba(0,0,0,.25);
+  transition:scale .8s var(--lent),box-shadow .8s ease,background .8s ease;
 }
 .fil__perle.est-enfilee{
-  scale:1.45;
-  background:radial-gradient(circle at 34% 30%,#d8f6fd,var(--lagon) 58%,#0c6c80);
-  box-shadow:0 0 0 4px rgba(31,183,212,.18),0 1px 4px rgba(0,0,0,.4);
+  scale:1.3;
+  background:radial-gradient(circle at 34% 30%,#e9fbff,var(--lagon) 50%,#0b6275 100%);
+  box-shadow:0 0 0 4px rgba(31,183,212,.16),0 0 14px rgba(31,183,212,.5),0 2px 4px rgba(0,0,0,.35);
 }
 
 /* l'étoile M'jy qui descend le fil au rythme de la lecture */
@@ -171,7 +171,8 @@ p:last-child{margin-bottom:0}
 }
 
 @media (max-width:900px){
-  .fil__perle{width:8px;height:8px}
+  :root{--marge:2.9rem}
+  .fil__perle{width:10px;height:10px}
   .fil__voyageur{width:16px;height:16px;margin:-8px 0 0 -8px}
 }
 
@@ -726,4 +727,14 @@ body.fond-sombre .nav a[aria-current="page"]{color:var(--lagon)}
   .marque__etoile,.fil__voyageur svg,.hero__filigrane,.rideau__etoile{animation:none}
   .intitule .etoile{scale:1;rotate:0deg}
   .monte{opacity:1;transform:none}
+}
+
+/* pastilles texturées : la vraie matière, bombée comme une perle */
+.pierre i{
+  width:28px;height:28px;background-size:220%;background-position:center;
+  box-shadow:inset -4px -5px 8px rgba(0,0,0,.45),inset 3px 3px 6px rgba(255,255,255,.35),0 2px 4px rgba(0,0,0,.35);
+}
+.pastille{
+  background-size:360% 360%;background-blend-mode:multiply;
+  box-shadow:inset -3px -4px 7px rgba(0,0,0,.4),inset 2px 2px 5px rgba(255,255,255,.28);
 }

@@ -99,17 +99,9 @@ Pour changer une matière, remplacez les deux fichiers en gardant les noms, en 2
 
 ## Le fil
 
-Le fil turquoise qui descend à gauche de chaque page est dessiné en SVG par `js/main.js` : deux brins sinusoïdaux qui se croisent, chacun interrompu un croisement sur deux pour passer sous l'autre. Il se remplit de turquoise au fur et à mesure du défilement, une perle d'argent s'enfile à chaque section et l'étoile M'jy suit la progression.
+Le fil qui descend la page est une vraie corde : `assets/img/fil-brut.png` (coton ciré naturel) et `fil-vif.png` (turquoise) sont deux tranches de corde tressée, tirées de la texture Rope001. `js/main.js` les pose tranche par tranche le long d'un tracé souple, avec une ombre portée. À chaque section, la corde fait une boucle et enfile une perle d'argent. Sous la ligne de lecture la corde est naturelle, au-dessus elle devient turquoise, et l'étoile M'jy marque la jonction.
 
-Réglages dans `js/main.js`, fonction `dessiner()` : `L` la largeur, `A` l'amplitude des brins, `P` la période. Couleurs et épaisseurs dans `css/style.css`, section 5.
-
-## Les textures de l'atelier
-
-Les matières du configurateur sont fabriquées par `textures.py` (fourni à la racine, hors site) et enregistrées dans `assets/tex/` : pour chaque pierre, une image de couleur (`turquoise.jpg`) et une carte de rugosité et de relief (`turquoise-r.jpg`). Pour changer l'aspect d'une pierre, modifiez ses couleurs dans `textures.py` et relancez `python3 textures.py`, ou remplacez directement les deux JPEG en gardant les noms.
-
-## Le fil
-
-Le fil tressé qui traverse les pages est dessiné en SVG par `js/main.js`. Il suit la lecture : les deux brins se teintent de turquoise au fur et à mesure, une perle d'argent s'allume à chaque section, et une étoile M'jy descend le long du fil. Amplitude et période de la torsade se règlent dans la fonction `dessiner()`.
+Épaisseur, amplitude et taille des boucles se règlent dans la fonction `reglages()` de `js/main.js` ; tout est proportionnel à la marge de la page.
 
 ## Le configurateur, en bref
 

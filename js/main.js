@@ -51,111 +51,180 @@
   };
 
   /* =========================================================
-     LE FIL — deux brins qui s'entrelacent sur toute la hauteur
+     LE FIL — une vraie corde de coton ciré qui descend la page.
+     Une bande de corde tressée (photo de matière) est posée tranche
+     par tranche le long d'un tracé souple ; à chaque section la corde
+     fait une boucle et enfile une perle d'argent. Au fil de la
+     lecture, la corde naturelle devient turquoise.
      ========================================================= */
   const fil = (() => {
     const hote = document.querySelector('[data-fil]');
     if (!hote) return null;
 
-    const SVG = 'http://www.w3.org/2000/svg';
-    const svg = document.createElementNS(SVG, 'svg');
-    svg.setAttribute('class', 'fil__toile');
-    hote.appendChild(svg);
-
-    const groupeFond = document.createElementNS(SVG, 'g');
-    groupeFond.setAttribute('class', 'fil__brins fil__brins--fond');
-    const groupeVif = document.createElementNS(SVG, 'g');
-    groupeVif.setAttribute('class', 'fil__brins fil__brins--vif');
-    svg.append(groupeFond, groupeVif);
-
+    const brut = document.createElement('canvas');
+    const vif = document.createElement('canvas');
+    brut.className = 'fil__toile';
+    vif.className = 'fil__toile fil__toile--vif';
     const voyageur = document.createElement('i');
     voyageur.className = 'fil__voyageur';
-    voyageur.innerHTML =
-      '<svg viewBox="0 0 200 200" aria-hidden="true"><use href="#etoile"/></svg>';
-    hote.appendChild(voyageur);
+    voyageur.innerHTML = '<svg viewBox="0 0 200 200" aria-hidden="true"><use href="#etoile"/></svg>';
+    hote.append(brut, vif, voyageur);
 
-    let L = 54, A = 15, P = 150, H = 0, centre = 27, perles = [];
+    const charger = src => new Promise(ok => {
+      const i = new Image();
+      i.onload = () => ok(i); i.onerror = () => ok(null); i.src = src;
+    });
+    const cordes = Promise.all([charger('/assets/img/fil-brut.png'), charger('/assets/img/fil-vif.png')]);
 
-    /* Un brin est une sinusoïde. On l'interrompt à un croisement sur deux,
-       là où l'autre brin doit passer devant : le vide suffit à dire
-       « celui-ci passe dessous ». Pas de calque de fond à assortir. */
-    const brin = (sens, dessous) => {
-      const pas = 4, trou = P * 0.075;
-      const morceaux = [];
-      let cour = [];
-      for (let y = -P; y <= H + P; y += pas) {
-        const croisement = Math.round(y / (P / 2));
-        const cache = (((croisement % 2) + 2) % 2 === (dessous ? 0 : 1))
-          && Math.abs(y - croisement * (P / 2)) < trou;
-        if (cache) {
-          if (cour.length > 1) morceaux.push(cour);
-          cour = [];
-          continue;
+    let pts = [], yMax = [], H = 0, perles = [], dims = {};
+
+    /* tout est proportionnel à la marge réelle : la corde occupe la gouttière */
+    const reglages = () => {
+      const env = document.querySelector('.enveloppe');
+      const m = env ? parseFloat(getComputedStyle(env).paddingLeft) : 60;
+      const petit = innerWidth < 900;
+      return {
+        L: Math.round(m), cx: m * 0.44, A: m * (petit ? 0.12 : 0.14),
+        r: m * (petit ? 0.14 : 0.145), T: petit ? 6.5 : Math.min(11, 6 + m * 0.055)
+      };
+    };
+
+    /* le tracé : une corde posée librement, pas une sinusoïde parfaite */
+    const tracer = () => {
+      const { cx, A, r } = dims;
+      // trois ondulations superposées : la corde se pose, elle ne suit pas une règle
+      const x = y => cx + A * (0.5 * Math.sin(y / 410 + 0.4) + 0.32 * Math.sin(y / 167 + 1.9)
+        + 0.18 * Math.sin(y / 61 + 4.1));
+      const boucles = [...document.querySelectorAll('[data-perle]')]
+        .map(sec => ({ y: sec.offsetTop + Math.min(sec.offsetHeight * 0.2, 190), nom: sec.dataset.perle }))
+        .sort((a, b) => a.y - b.y);
+      pts = []; perles = [];
+      let b = 0;
+      for (let y = -12; y <= H + 12; y += 1.5) {
+        pts.push([x(y), y]);
+        if (b < boucles.length && y >= boucles[b].y) {
+          const px = x(y), n = Math.ceil((2 * Math.PI * r) / 1.4);
+          for (let k = 1; k <= n; k++) {           // un tour complet : la corde se croise
+            const t = Math.PI - (2 * Math.PI * k) / n;
+            pts.push([px + r + r * Math.cos(t), y + r * 1.2 * Math.sin(t)]);
+          }
+          perles.push({ y: y + r * 2.7, x: x(y + r * 2.7), nom: boucles[b].nom });
+          b++;
         }
-        cour.push([centre + sens * A * Math.sin((y / P) * Math.PI * 2), y]);
       }
-      if (cour.length > 1) morceaux.push(cour);
-      return morceaux
-        .map(m => 'M ' + m.map(([x, y]) => x.toFixed(1) + ' ' + y.toFixed(1)).join(' L '))
-        .join(' ');
+      yMax = []; let m = -Infinity;
+      pts.forEach(p => { m = Math.max(m, p[1]); yMax.push(m); });
     };
 
-    const dessiner = () => {
-      const petit = window.innerWidth < 900;
-      L = petit ? 24 : 54;
-      A = petit ? 7 : 15;
-      P = petit ? 110 : 152;
-      centre = L / 2;
-      H = window.innerHeight;
-      hote.style.width = L + 'px';
-      svg.setAttribute('viewBox', `0 0 ${L} ${H}`);
-      svg.setAttribute('width', L);
-      svg.setAttribute('height', H);
+    /* pose la bande de corde le long du tracé, tranche par tranche */
+    const peindre = (toile, bande) => {
+      let dpr = Math.min(2, devicePixelRatio || 1);
+      if (H * dpr > 32000) dpr = 32000 / H;            // limite des navigateurs
+      toile.width = Math.round(dims.L * dpr);
+      toile.height = Math.round(H * dpr);
+      toile.style.width = dims.L + 'px';
+      toile.style.height = H + 'px';
+      const ctx = toile.getContext('2d');
+      ctx.scale(dpr, dpr);
+      const T = dims.T;
 
-      [groupeFond, groupeVif].forEach(g => {
-        g.textContent = '';
-        [[1, false], [-1, true]].forEach(([sens, dessous]) => {
-          const p = document.createElementNS(SVG, 'path');
-          p.setAttribute('d', brin(sens, dessous));
-          g.appendChild(p);
-        });
-      });
-      poserPerles();
+      // ombre portée de la corde sur la page
+      ctx.save();
+      ctx.globalAlpha = 0.3; ctx.filter = 'blur(2.2px)';
+      ctx.strokeStyle = '#0b1211'; ctx.lineWidth = T * 0.85; ctx.lineCap = 'round'; ctx.lineJoin = 'round';
+      ctx.beginPath();
+      pts.forEach(([px, py], i) => (i ? ctx.lineTo(px + 1.3, py + 2.2) : ctx.moveTo(px + 1.3, py + 2.2)));
+      ctx.stroke();
+      ctx.restore();
+
+      if (!bande) {                                    // secours si l'image manque
+        ctx.strokeStyle = toile === vif ? '#1FB7D4' : '#aa987a';
+        ctx.lineWidth = T * 0.7; ctx.lineCap = 'round';
+        ctx.beginPath(); pts.forEach(([px, py], i) => (i ? ctx.lineTo(px, py) : ctx.moveTo(px, py))); ctx.stroke();
+        return;
+      }
+      const sw = bande.width, sh = bande.height;
+      const parPx = sh / T;                            // pixels de bande par pixel de corde
+      let s = 0;
+      for (let i = 1; i < pts.length; i++) {
+        const [x0, y0] = pts[i - 1], [x1, y1] = pts[i];
+        const d = Math.hypot(x1 - x0, y1 - y0);
+        if (!d) continue;
+        ctx.save();
+        ctx.translate(x0, y0);
+        ctx.rotate(Math.atan2(y1 - y0, x1 - x0));
+        const sx = (s * parPx) % sw, w = d * parPx;
+        if (sx + w <= sw) {
+          ctx.drawImage(bande, sx, 0, w, sh, 0, -T / 2, d + 0.7, T);
+        } else {                                       // raccord de la bande
+          const w1 = sw - sx, d1 = (d * w1) / w;
+          ctx.drawImage(bande, sx, 0, w1, sh, 0, -T / 2, d1 + 0.5, T);
+          ctx.drawImage(bande, 0, 0, w - w1, sh, d1, -T / 2, d - d1 + 0.7, T);
+        }
+        ctx.restore();
+        s += d;
+      }
     };
 
-    /* une perle d'argent par section, aimantée sur un croisement des brins */
     const poserPerles = () => {
-      perles.forEach(p => p.el.remove());
-      perles = [];
-      const hDoc = document.documentElement.scrollHeight;
-      document.querySelectorAll('[data-perle]').forEach(section => {
-        const ratio = Math.min(0.99, Math.max(0.012,
-          (section.offsetTop + section.offsetHeight * 0.18) / hDoc));
-        const yCroix = Math.round((ratio * H) / (P / 2)) * (P / 2);
+      hote.querySelectorAll('.fil__perle').forEach(e => e.remove());
+      perles.forEach(p => {
         const el = document.createElement('i');
         el.className = 'fil__perle';
-        el.style.top = yCroix + 'px';
-        el.style.left = centre + 'px';
-        el.title = section.dataset.perle || '';
+        el.style.top = p.y + 'px';
+        el.style.left = p.x + 'px';
+        el.title = p.nom || '';
         hote.appendChild(el);
-        perles.push({ el, ratio: yCroix / H });
+        p.el = el;
+      });
+    };
+
+    let jeton = 0;
+    const dessiner = () => {
+      const moi = ++jeton;
+      dims = reglages();
+      hote.style.height = '0px';
+      H = document.documentElement.scrollHeight;
+      hote.style.height = H + 'px';
+      hote.style.width = dims.L + 'px';
+      tracer();
+      poserPerles();
+      cordes.then(([b, v]) => {
+        if (moi !== jeton) return;                     // un redessin plus récent a pris la main
+        peindre(brut, b);
+        peindre(vif, v);
+        avancer();
       });
     };
 
     const barre = document.querySelector('[data-progression] span');
 
     const avancer = () => {
-      const h = document.documentElement.scrollHeight - window.innerHeight;
-      const p = h > 0 ? Math.min(1, Math.max(0, window.scrollY / h)) : 0;
-      groupeVif.style.clipPath = `inset(0 0 ${((1 - p) * 100).toFixed(2)}% 0)`;
-      const y = p * H;
+      if (!H) return;
+      const niveau = window.scrollY + innerHeight * 0.55;
+      vif.style.clipPath = `inset(0 0 ${Math.max(0, H - niveau).toFixed(0)}px 0)`;
+
+      // l'étoile avance au bout de la partie turquoise
+      let lo = 0, hi = yMax.length - 1;
+      while (lo < hi) { const mid = (lo + hi) >> 1; if (yMax[mid] < niveau) lo = mid + 1; else hi = mid; }
+      const p = pts[lo] || [dims.cx, niveau];
       voyageur.style.transform =
-        `translate3d(${(centre + A * Math.sin((y / P) * Math.PI * 2)).toFixed(1)}px, ${y.toFixed(1)}px, 0)`
-        + ` rotate(${(y * 0.3).toFixed(1)}deg)`;
-      voyageur.classList.toggle('est-visible', p > 0.003 && p < 0.997);
-      perles.forEach(perle => perle.el.classList.toggle('est-enfilee', p >= perle.ratio - 0.004));
-      if (barre) barre.style.width = (p * 100) + '%';
+        `translate3d(${p[0].toFixed(1)}px, ${p[1].toFixed(1)}px, 0) rotate(${(niveau * 0.25).toFixed(1)}deg)`;
+      const fin = document.documentElement.scrollHeight - innerHeight;
+      voyageur.classList.toggle('est-visible', window.scrollY > 4 && window.scrollY < fin - 4);
+      perles.forEach(pl => pl.el && pl.el.classList.toggle('est-enfilee', niveau >= pl.y));
+      if (barre) barre.style.width = (fin > 0 ? Math.min(100, (window.scrollY / fin) * 100) : 0) + '%';
     };
+
+    // la page grandit quand les images arrivent : on recoud la corde
+    if ('ResizeObserver' in window) {
+      let h0 = 0, att;
+      new ResizeObserver(() => {
+        const h = document.body.scrollHeight;
+        if (Math.abs(h - h0) < 30) return;
+        h0 = h; clearTimeout(att); att = setTimeout(dessiner, 180);
+      }).observe(document.body);
+    }
 
     return { dessiner, avancer, poserPerles };
   })();
